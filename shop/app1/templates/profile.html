@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Profile — FreshVeggies{% endblock %}
+{% block main-content %}
+<div class="modern-account-bg">
+  <div class="container py-4">
+    
+    <!-- Compact Header -->
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h2 class="fw-bold m-0" style="color: #0f172a; letter-spacing: -0.5px;">Account Settings</h2>
+      <div class="d-none d-sm-flex align-items-center gap-3">
+        <span class="text-muted fw-medium fs-6">{{ request.user.email }}</span>
+        <div class="bg-success text-white fw-bold d-flex justify-content-center align-items-center shadow-sm" style="width: 42px; height: 42px; border-radius: 50%;">
+          {{ user_form.first_name.value|first|default:"U"|upper }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Horizontal Navigation -->
+    <div class="bg-white rounded-top shadow-sm border border-bottom-0 p-2 d-flex flex-wrap gap-1 horizontal-nav-bar">
+      <a href="{% url 'profile' %}" class="btn btn-nav active"><i class="fas fa-user me-2"></i>Profile Details</a>
+      <a href="{% url 'address' %}" class="btn btn-nav"><i class="fas fa-map-marker-alt me-2"></i>Saved Addresses</a>
+      <a href="{% url 'orders' %}" class="btn btn-nav"><i class="fas fa-box me-2"></i>Order History</a>
+      <a href="{% url 'passwordchange' %}" class="btn btn-nav"><i class="fas fa-shield-alt me-2"></i>Security</a>
+    </div>
+
+    <!-- Content Card -->
+    <div class="bg-white rounded-bottom shadow-sm border p-4 p-md-5 mb-5 content-card">
+        <div class="row">
+            <div class="col-lg-8">
+                <h4 class="fw-bold text-dark mb-1">Personal Details</h4>
+                <p class="text-muted mb-4" style="font-size: 0.95rem;">Update your personal information and contact details.</p>
+                
+                <form action="" method="post">
+                  {% csrf_token %}
+                  
+                  <div class="row g-4 mb-4">
+                    <!-- First Name -->
+                    <div class="col-md-6">
+                      <label class="form-label fw-semibold text-dark">{{ user_form.first_name.label }}</label>
+                      <div class="input-group modern-input-group">
+                        <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-id-card"></i></span>
+                        {{ user_form.first_name }}
+                      </div>
+                      {% if user_form.first_name.errors %}
+                        <small class="text-danger mt-1 fw-medium d-block">{{ user_form.first_name.errors|striptags }}</small>
+                      {% endif %}
+                    </div>
+
+                    <!-- Last Name -->
+                    <div class="col-md-6">
+                      <label class="form-label fw-semibold text-dark">{{ user_form.last_name.label }}</label>
+                      <div class="input-group modern-input-group">
+                        <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-id-card"></i></span>
+                        {{ user_form.last_name }}
+                      </div>
+                      {% if user_form.last_name.errors %}
+                        <small class="text-danger mt-1 fw-medium d-block">{{ user_form.last_name.errors|striptags }}</small>
+                      {% endif %}
+                    </div>
+
+                    <!-- Email -->
+                    <div class="col-md-12">
+                      <label class="form-label fw-semibold text-dark">{{ user_form.email.label }}</label>
+                      <div class="input-group modern-input-group">
+                        <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-envelope"></i></span>
+                        {{ user_form.email }}
+                      </div>
+                      {% if user_form.email.errors %}
+                        <small class="text-danger mt-1 fw-medium d-block">{{ user_form.email.errors|striptags }}</small>
+                      {% endif %}
+                    </div>
+                    
+                    <!-- Phone -->
+                    <div class="col-md-12">
+                      <label class="form-label fw-semibold text-dark">{{ profile_form.phone.label }}</label>
+                      <div class="input-group modern-input-group">
+                        <span class="input-group-text text-dark fw-bold border-end-0" style="background-color: #f8fafc;">+91</span>
+                        {{ profile_form.phone }}
+                      </div>
+                      <div class="form-text mt-1 text-muted" style="font-size: 0.85rem;"><i class="fas fa-info-circle me-1"></i> For delivery calls only.</div>
+                      {% if profile_form.phone.errors %}
+                        <small class="text-danger mt-1 fw-medium d-block">{{ profile_form.phone.errors|striptags }}</small>
+                      {% endif %}
+                    </div>
+                  </div>
+
+                  <hr class="my-4 border-light">
+
+                  <!-- Action -->
+                  <div class="d-flex">
+                    <button type="submit" class="btn btn-success px-4 py-2 fw-semibold modern-btn shadow-sm">
+                      <i class="fas fa-save me-2"></i> Save Changes
+                    </button>
+                  </div>
+                </form>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.modern-account-bg {
+    background-color: #f1f5f9;
+    min-height: calc(100vh - 80px);
+}
+
+.horizontal-nav-bar {
+    border-color: #e2e8f0 !important;
+}
+
+.content-card {
+    border-color: #e2e8f0 !important;
+}
+
+.btn-nav {
+    color: #475569;
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 0.7rem 1.25rem;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    transition: all 0.2s ease;
+}
+
+.btn-nav:hover {
+    background-color: #f8fafc;
+    color: #0f172a;
+}
+
+.btn-nav.active {
+    background-color: #ecfdf5;
+    color: #059669;
+    font-weight: 600;
+}
+
+.modern-input-group .form-control {
+    border-left: none;
+    padding-left: 0.75rem;
+}
+.modern-input-group .form-control:focus {
+    box-shadow: none;
+    border-color: #cbd5e1;
+}
+
+.modern-input-group {
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+.modern-input-group:focus-within {
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+    border-color: #10b981;
+}
+
+.modern-input-group .input-group-text,
+.modern-input-group .form-control {
+    border: 1px solid #cbd5e1;
+    background-color: #fff;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+}
+
+.modern-input-group:focus-within .input-group-text,
+.modern-input-group:focus-within .form-control {
+    border-color: #10b981;
+}
+
+.modern-btn {
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+.modern-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2) !important;
+}
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputs = document.querySelectorAll('.modern-input-group .form-control');
+        inputs.forEach(input => {
+            // Remove floating layout placeholder trick if any
+            if(input.getAttribute('placeholder') === ' ') {
+                input.removeAttribute('placeholder');
+            }
+        });
+    });
+</script>
+{% endblock %}

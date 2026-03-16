@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Addresses — FreshVeggies{% endblock %}
+{% block main-content %}
+<div class="modern-account-bg">
+  <div class="container py-4">
+    
+    <!-- Compact Header -->
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h2 class="fw-bold m-0" style="color: #0f172a; letter-spacing: -0.5px;">Account Settings</h2>
+      <div class="d-none d-sm-flex align-items-center gap-3">
+        <span class="text-muted fw-medium fs-6">{{ request.user.email }}</span>
+        <div class="bg-success text-white fw-bold d-flex justify-content-center align-items-center shadow-sm" style="width: 42px; height: 42px; border-radius: 50%;">
+          {{ request.user.first_name|first|default:"U"|upper }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Horizontal Navigation -->
+    <div class="bg-white rounded-top shadow-sm border border-bottom-0 p-2 d-flex flex-wrap gap-1 horizontal-nav-bar">
+      <a href="{% url 'profile' %}" class="btn btn-nav"><i class="fas fa-user me-2"></i>Profile Details</a>
+      <a href="{% url 'address' %}" class="btn btn-nav active"><i class="fas fa-map-marker-alt me-2"></i>Saved Addresses</a>
+      <a href="{% url 'orders' %}" class="btn btn-nav"><i class="fas fa-box me-2"></i>Order History</a>
+      <a href="{% url 'passwordchange' %}" class="btn btn-nav"><i class="fas fa-shield-alt me-2"></i>Security</a>
+    </div>
+
+    <!-- Content Card -->
+    <div class="bg-white rounded-bottom shadow-sm border p-4 p-md-5 mb-5 content-card">
+        
+        <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-light">
+            <div>
+                <h4 class="fw-bold text-dark mb-1">Saved Addresses</h4>
+                <p class="text-muted mb-0" style="font-size: 0.95rem;">Manage where your fresh veggies are delivered.</p>
+            </div>
+            <a href="{% url 'add-address' %}" class="btn btn-success px-4 py-2 fw-semibold modern-btn shadow-sm">
+                <i class="fas fa-plus me-2"></i> Add New
+            </a>
+        </div>
+
+        <div class="row g-4 pt-2">
+            {% for ad in add %}
+            <div class="col-md-6 col-lg-4">
+                <!-- Address Card -->
+                <div class="address-card h-100 p-4 border rounded-4 bg-white position-relative d-flex flex-column transition-all">
+                    
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-light text-secondary rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 40px; height: 40px;">
+                            <i class="fas fa-home fs-6"></i>
+                        </div>
+                        <h6 class="fw-bold mb-0 text-dark">{{ ad.name }}</h6>
+                    </div>
+                    
+                    <div class="mb-4 ps-1 text-muted flex-grow-1" style="font-size: 0.95rem;">
+                        <p class="mb-1">{{ ad.address }}</p>
+                        <p class="mb-1">{{ ad.city }}, {{ ad.state }}</p>
+                        <p class="mb-0 fw-semibold text-dark mt-2">{{ ad.zipcode }}</p>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-auto pt-3 border-top border-light">
+                        <a href="{% url 'updateAddress' ad.id %}" class="btn btn-sm btn-light w-50 fw-medium text-dark border hover-bg-gray">Edit</a>
+                        <a href="{% url 'deleteAddress' ad.id %}" class="btn btn-sm btn-outline-danger w-50 fw-medium" onclick="return confirm('Remove this address?');">Remove</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 py-5 text-center bg-light rounded-4 border border-dashed">
+              <div class="mx-auto rounded-circle bg-white shadow-sm d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                  <i class="fas fa-map-marked-alt text-muted fs-3"></i>
+              </div>
+              <h5 class="fw-bold text-dark mb-2">No Saved Addresses</h5>
+              <p class="text-muted mb-4 max-w-sm mx-auto">Add an address so we know where to deliver your fresh veggies.</p>
+              <a href="{% url 'add-address' %}" class="btn btn-success px-4 py-2 fw-semibold modern-btn shadow-sm">
+                Add Your First Address
+              </a>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+.modern-account-bg {
+    background-color: #f1f5f9;
+    min-height: calc(100vh - 80px);
+}
+
+.horizontal-nav-bar {
+    border-color: #e2e8f0 !important;
+}
+
+.content-card {
+    border-color: #e2e8f0 !important;
+}
+
+.btn-nav {
+    color: #475569;
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 0.7rem 1.25rem;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    transition: all 0.2s ease;
+}
+
+.btn-nav:hover {
+    background-color: #f8fafc;
+    color: #0f172a;
+}
+
+.btn-nav.active {
+    background-color: #ecfdf5;
+    color: #059669;
+    font-weight: 600;
+}
+
+.modern-btn {
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+.modern-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2) !important;
+}
+
+.address-card {
+    border-color: #e2e8f0 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.01);
+}
+.address-card:hover {
+    border-color: #cbd5e1 !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+}
+
+.hover-bg-gray:hover {
+    background-color: #e2e8f0 !important;
+}
+
+.border-dashed {
+    border-style: dashed !important;
+    border-color: #cbd5e1 !important;
+}
+</style>
+{% endblock %}

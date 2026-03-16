@@ -1,0 +1,1 @@
+# Django\n*.log\n*.pot\n*.pyc\n__pycache__/\nlocal_settings.py\ndb.sqlite3\ndb.sqlite3-journal\nmedia/\n\n# macOS\n.DS_Store\n.AppleDouble\n.LSOverride\nIcon\n\n# Environment\n.env\n.venv\nenv1/\nenv/\nvenv/\nENV/\n\n# Editors\n.vscode/\n.idea/\n*.swp\n*.swo\nnode_modules/

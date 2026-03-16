@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ product.title }} — FreshVeggies{% endblock %}
+{% block main-content %}
+<div class="container product-detail-section">
+  <!-- Breadcrumb -->
+  <div class="breadcrumb-fresh">
+    <a href="{% url 'home' %}"><i class="fas fa-home me-1"></i>Home</a>
+    <span class="mx-2">›</span>
+    <span>{{ product.title }}</span>
+  </div>
+
+  <div class="row g-4 mt-1">
+    <!-- Product Image -->
+    <div class="col-lg-5 col-md-6">
+      <img src="{{ product.product_image.url }}" alt="{{ product.title }}" class="product-detail-img">
+    </div>
+
+    <!-- Product Info -->
+    <div class="col-lg-7 col-md-6">
+      <h1 class="product-detail-title">{{ product.title }}</h1>
+      <p class="product-detail-desc">{{ product.description }}</p>
+
+      <div class="price-tag">
+        <span class="current">₹{{ product.discounted_price }}</span>
+        <span class="old">₹{{ product.selling_price }}</span>
+        <span class="discount"><i class="fas fa-tag me-1"></i>Great Deal</span>
+      </div>
+
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">
+        <i class="fas fa-check-circle text-success me-1"></i> Inclusive of all taxes
+      </p>
+
+      <!-- Action Buttons -->
+      <div class="d-flex flex-wrap gap-3 mb-4">
+        {% if request.user.is_authenticated %}
+        {% if item_already_in_cart %}
+        <a href="{% url 'showcart' %}" class="btn-go-cart">
+          <i class="fas fa-shopping-cart"></i> Go to Cart
+        </a>
+        {% else %}
+        <form action="{% url 'add-to-cart' %}">
+          <input type="hidden" name="prod_id" value="{{ product.id }}">
+          <button type="submit" class="btn-add-cart">
+            <i class="fas fa-cart-plus"></i> Add to Cart
+          </button>
+        </form>
+        {% endif %}
+        <form action="{% url 'buy-now' %}">
+          <input type="hidden" name="prod_id" value="{{ product.id }}">
+          <button type="submit" class="btn-buy-now">
+            <i class="fas fa-bolt"></i> Buy Now
+          </button>
+        </form>
+        {% else %}
+        <a href="{% url 'login' %}" class="btn-add-cart">
+          <i class="fas fa-cart-plus"></i> Add to Cart
+        </a>
+        <a href="{% url 'login' %}" class="btn-buy-now">
+          <i class="fas fa-bolt"></i> Buy Now
+        </a>
+        {% endif %}
+      </div>
+
+      <hr>
+
+      <!-- Offers -->
+      <div class="offers-list">
+        <h6 style="font-weight: 600; margin-bottom: 0.75rem;"><i class="fas fa-tag text-danger me-2"></i>Available
+          Offers</h6>
+        <div class="offer-item-fresh">
+          <i class="fas fa-check-circle offer-icon-fresh"></i>
+          <span><strong>Bank Offer:</strong> 5% Unlimited Cashback on Axis Bank Credit Card</span>
+        </div>
+        <div class="offer-item-fresh">
+          <i class="fas fa-check-circle offer-icon-fresh"></i>
+          <span><strong>Free Delivery:</strong> On orders above ₹200</span>
+        </div>
+        <div class="offer-item-fresh">
+          <i class="fas fa-check-circle offer-icon-fresh"></i>
+          <span><strong>Fresh Guarantee:</strong> 100% fresh or get a replacement</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

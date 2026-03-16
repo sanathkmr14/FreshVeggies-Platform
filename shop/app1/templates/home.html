@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}FreshVeggies — Farm Fresh to Your Door{% endblock %}
+
+{% block banner_slider %}
+{% if request.user.is_authenticated %}
+<!-- Hero Banner (Static) -->
+<div class="hero-section">
+  <div class="hero-slide-img">
+    <img src="{% static 'banner/img1.jpg' %}" alt="Fresh Vegetables" class="hero-banner-img">
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block main-content %}
+{% if request.user.is_authenticated %}
+<!-- Products Section (For Logged In Users) -->
+<section class="container py-4" id="products">
+  <h2 class="section-title">Deals of the Day</h2>
+  <div class="section-divider-line"></div>
+  <p class="section-subtitle">Fresh picks from local farms, delivered to your door</p>
+
+  <div class="product-grid">
+    {% for item in products %}
+    <a href="{% url 'product_detail' pk=item.pk %}" class="product-card">
+      <div class="product-card-img-wrapper">
+        <img src="{{ item.product_image.url }}" alt="{{ item.title }}" class="product-card-img">
+      </div>
+      <div class="product-card-body">
+        <h3 class="product-card-title">{{ item.title }}</h3>
+        <div class="product-card-price">
+          ₹{{ item.discounted_price }}
+          <span class="original">₹{{ item.selling_price }}</span>
+        </div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+
+{% else %}
+<!-- Guest Welcome Section (Premium CSS Banner) -->
+<section class="container-fluid p-0 mb-5">
+  <div class="guest-hero-banner d-flex align-items-center justify-content-center text-center">
+    <div class="guest-hero-content p-5">
+      <h1 class="display-3 fw-bolder text-white mb-3 tracking-tight">Pure. Organic. <br><span style="color: #f77f00;">Fresh.</span></h1>
+      <p class="lead text-white-50 mb-5 fw-normal mx-auto" style="max-width: 600px; font-size: 1.25rem;">
+        Experience farm-to-doorstep delivery. Join thousands of health-conscious customers getting the freshest local vegetables every morning.
+      </p>
+      
+      <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+        <a href="{% url 'customerregistration' %}" class="btn btn-warning btn-lg px-5 py-3 shadow-lg" style="border-radius: 50px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
+          Start Shopping
+        </a>
+        <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg px-5 py-3" style="border-radius: 50px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
+          Log In
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mt-5">
+    <div class="row text-center premium-features g-4">
+      <div class="col-md-4">
+        <div class="p-4 rounded-4" style="background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.03);">
+          <div class="icon-circle mx-auto mb-3" style="width: 60px; height: 60px; background: #e6f2ec; color: #2d6a4f; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+            <i class="fas fa-truck"></i>
+          </div>
+          <h5 class="fw-bold mb-2">Free Delivery</h5>
+          <p class="text-muted small mb-0">Complimentary shipping on all orders over ₹500.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="p-4 rounded-4" style="background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.03);">
+          <div class="icon-circle mx-auto mb-3" style="width: 60px; height: 60px; background: #fff3cd; color: #f77f00; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+            <i class="fas fa-seedling"></i>
+          </div>
+          <h5 class="fw-bold mb-2">100% Organic</h5>
+          <p class="text-muted small mb-0">Sourced directly from certified local farms.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="p-4 rounded-4" style="background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.03);">
+          <div class="icon-circle mx-auto mb-3" style="width: 60px; height: 60px; background: #e0fbfc; color: #0077b6; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+            <i class="fas fa-undo"></i>
+          </div>
+          <h5 class="fw-bold mb-2">Freshness Guarantee</h5>
+          <p class="text-muted small mb-0">Not satisfied? We offer easy, no-questions-asked returns.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.guest-hero-banner {
+  background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%);
+  min-height: 500px;
+  position: relative;
+  overflow: hidden;
+}
+
+.guest-hero-banner::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+.guest-hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+.tracking-tight {
+  letter-spacing: -1px;
+}
+
+.btn-warning {
+  background-color: #f77f00;
+  border-color: #f77f00;
+  color: white;
+}
+.btn-warning:hover {
+  background-color: #e67600;
+  border-color: #e67600;
+  color: white;
+}
+
+.btn-outline-light:hover {
+  background-color: white;
+  color: #2d6a4f;
+}
+</style>
+{% endif %}
+{% endblock %}

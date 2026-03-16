@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Checkout — FreshVeggies{% endblock %}
+{% block main-content %}
+<div class="container checkout-section">
+  <h2 class="section-title mb-4" style="text-align: left;">Checkout</h2>
+
+  <div class="row g-4">
+    <!-- Order Summary -->
+    <div class="col-lg-7">
+      <div class="profile-form-card">
+        <h5 style="font-weight: 600; margin-bottom: 1rem;"><i class="fas fa-box me-2"></i>Order Summary</h5>
+        {% for item in cart_items %}
+        <div class="checkout-item">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 style="font-weight: 600; margin-bottom: 0.25rem;">{{ item.product.title }}</h6>
+              <span style="color: var(--text-muted); font-size: 0.85rem;">Qty: {{ item.quantity }}</span>
+            </div>
+            <span style="font-weight: 700; color: var(--primary);">₹{{ item.total_cost }}</span>
+          </div>
+        </div>
+        {% endfor %}
+        <hr>
+        <div class="d-flex justify-content-between" style="font-weight: 700; font-size: 1.1rem;">
+          <span>Total (incl. shipping ₹70)</span>
+          <span style="color: var(--primary);">₹{{ totalamount }}</span>
+        </div>
+        <div style="background-color: #f0f0f0; padding: 0.75rem; border-radius: 0.5rem; margin-top: 1rem;">
+          <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 0.5rem;">
+            <i class="fas fa-credit-card me-1"></i>
+            PayPal Charge (1 USD = ₹83):
+          </p>
+          <p style="font-weight: 700; color: var(--primary); margin-bottom: 0;">
+            $<span id="usd-amount">0.00</span> USD
+          </p>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 1rem;">
+          <i class="fas fa-info-circle me-1"></i>
+          By placing this order, you agree to our Terms and Conditions. Fresh Vegetables guarantees 100% fresh produce
+          or a full replacement.
+        </p>
+      </div>
+    </div>
+
+    <!-- Shipping Address -->
+    <div class="col-lg-5">
+      <div class="profile-form-card">
+        <h5 style="font-weight: 600; margin-bottom: 1rem;"><i class="fas fa-map-marker-alt me-2"></i>Shipping Address
+        </h5>
+        <form id="checkout-form">
+          {% csrf_token %}
+          {% for ad in add %}
+          <label class="d-block mb-3" style="cursor: pointer;">
+            <input type="radio" name="custid" value="{{ ad.id }}" class="d-none" {% if forloop.first %}checked{% endif %}>
+            <div class="address-card {% if forloop.first %}selected{% endif %}">
+              <h5>{{ ad.name }}</h5>
+              <p>{{ ad.address }}, {{ ad.city }}, {{ ad.state }} — {{ ad.zipcode }}</p>
+            </div>
+          </label>
+          {% endfor %}
+
+          {% if not add %}
+          <div class="text-center py-3">
+            <p style="color: var(--text-muted);">No address found.</p>
+            <a href="{% url 'profile' %}" class="btn-shop-now" style="font-size: 0.9rem; padding: 0.5rem 1.5rem;">Add
+              Address</a>
+          </div>
+          {% endif %}
+
+          <!-- Payment Buttons Container -->
+          <div class="payment-options mt-4">
+            <h6 style="font-weight: 600; margin-bottom: 1rem;">Select Payment Method:</h6>
+            
+            <!-- Cash on Delivery Button -->
+            <button type="button" id="cod-button" class="btn btn-dark w-100 py-2 mb-3 shadow-sm" style="border-radius: 8px; font-weight: 600;" {% if not add %}disabled{% endif %}>
+              <i class="fas fa-money-bill-wave me-2"></i>Pay with Cash on Delivery
+            </button>
+
+            <div class="text-center mb-3">
+              <span class="text-muted small">OR</span>
+            </div>
+
+            <!-- PayPal Button Container -->
+            <div id="paypal-button-container" {% if not add %}style="display:none;"{% endif %}></div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+{% block extra_js %}
+<script src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}&currency=USD"></script>
+<script>
+  // Calculate and display USD amount
+  const totalAmountRupees = {{ totalamount }};
+  const usdAmount = (totalAmountRupees / 83).toFixed(2);
+  document.getElementById('usd-amount').textContent = usdAmount;
+
+  // Address card selection
+  document.querySelectorAll('input[name="custid"]').forEach(function (radio) {
+    radio.addEventListener('change', function () {
+      document.querySelectorAll('.address-card').forEach(function (card) {
+        card.classList.remove('selected');
+      });
+      this.closest('label').querySelector('.address-card').classList.add('selected');
+    });
+  });
+
+  // Cash on Delivery Integration
+  document.getElementById('cod-button').onclick = function(e) {
+    var selectedAddress = document.querySelector('input[name="custid"]:checked');
+    if (!selectedAddress) {
+      alert('Please select a shipping address');
+      return;
+    }
+    
+    // Redirect to COD view with customer ID
+    window.location.href = "{% url 'place_order_cod' %}?custid=" + selectedAddress.value;
+  };
+
+  // PayPal Integration
+  paypal.Buttons({
+    style: {
+      layout: 'vertical',
+      color: 'gold',
+      shape: 'rect',
+      label: 'paypal'
+    },
+    
+    createOrder: function(data, actions) {
+      console.log('Creating PayPal order...');
+      // Get selected address
+      var selectedAddress = document.querySelector('input[name="custid"]:checked');
+      if (!selectedAddress) {
+        alert('Please select a shipping address');
+        return;
+      }
+      
+      console.log('Selected address:', selectedAddress.value);
+      
+      // Create order via backend
+      return fetch("{% url 'create_paypal_payment' %}", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({
+          custid: selectedAddress.value
+        })
+      })
+      .then(function(res) {
+        console.log('createOrder response status:', res.status);
+        return res.json();
+      })
+      .then(function(orderData) {
+        console.log('Order created with ID:', orderData.id || orderData.error);
+        if (orderData.error) {
+          alert('Error creating PayPal order: ' + orderData.error);
+          throw new Error(orderData.error);
+        }
+        return orderData.id;
+      });
+    },
+    
+    onApprove: function(data, actions) {
+      console.log('Payment approved, orderID:', data.orderID);
+      // Capture the payment
+      return fetch("{% url 'capture_paypal_payment' %}", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({
+          orderID: data.orderID,
+          custid: document.querySelector('input[name="custid"]:checked').value
+        })
+      })
+      .then(function(res) {
+        console.log('Capture response status:', res.status);
+        return res.json();
+      })
+      .then(function(orderData) {
+        console.log('Capture response data:', orderData);
+        if (orderData.success) {
+          // Redirect to orders page
+          window.location.href = "{% url 'orders' %}";
+        } else {
+          alert('Payment capture failed: ' + (orderData.error || 'Unknown error'));
+        }
+      })
+      .catch(function(err) {
+        console.error('Payment error:', err);
+        alert('An error occurred during payment processing: ' + err.message);
+      });
+    },
+    
+    onError: function(err) {
+      console.error('PayPal error:', err);
+      alert('An error occurred with PayPal. Please try again or use another payment method.');
+    },
+    
+    onCancel: function(data) {
+      console.log('Payment cancelled by user');
+    }
+  }).render('#paypal-button-container');
+</script>
+{% endblock %}

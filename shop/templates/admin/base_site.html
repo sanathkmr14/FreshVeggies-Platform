@@ -1,0 +1,120 @@
+{% extends "admin/base_site.html" %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    /* FreshVeggies Custom Admin Theme */
+    :root {
+        --primary-color: #2d6a4f;
+        --secondary-color: #f77f00;
+        --primary-hover: #1b4332;
+        --body-bg: #f8f9fa;
+        --header-bg: #2d6a4f;
+        --header-text: #ffffff;
+        --link-color: #2d6a4f;
+        --link-hover: #f77f00;
+    }
+
+    /* Header */
+    #header {
+        background-color: var(--header-bg) !important;
+        color: var(--header-text) !important;
+        padding: 10px 40px;
+    }
+
+    #header a:link,
+    #header a:visited {
+        color: white;
+    }
+
+    #branding h1 {
+        font-weight: bold;
+        color: white !important;
+    }
+
+    /* Links */
+    a:link,
+    a:visited {
+        color: var(--link-color);
+    }
+
+    a:hover {
+        color: var(--link-hover);
+    }
+
+    /* Modules (Tables) */
+    .module h2,
+    .module caption,
+    .inline-group h2 {
+        background-color: var(--primary-color) !important;
+        color: white !important;
+    }
+
+    /* Buttons */
+    .button,
+    input[type=submit],
+    input[type=button],
+    .submit-row input,
+    a.button {
+        background-color: var(--primary-color);
+        border: none;
+        border-radius: 4px;
+        color: white;
+        padding: 8px 15px;
+        text-transform: uppercase;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .button:hover,
+    input[type=submit]:hover,
+    input[type=button]:hover {
+        background-color: var(--primary-hover);
+    }
+
+    .button.default,
+    input[type=submit].default,
+    .submit-row input.default {
+        background-color: var(--secondary-color);
+    }
+
+    .button.default:hover,
+    input[type=submit].default:hover,
+    .submit-row input.default:hover {
+        background-color: #d66d00;
+    }
+
+    /* Object Tools (Add button on top right) */
+    .object-tools a.addlink {
+        background-color: var(--secondary-color);
+    }
+
+    .object-tools a.addlink:hover {
+        background-color: #d66d00;
+    }
+
+    /* Selected rows */
+    tr.selected {
+        background-color: #e6f2ec !important;
+    }
+
+    /* Active links in sidebar */
+    div.breadcrumbs {
+        background-color: #40916c;
+        color: white;
+    }
+
+    div.breadcrumbs a {
+        color: #d8f3dc;
+    }
+
+    div.breadcrumbs a:focus,
+    div.breadcrumbs a:hover {
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">FreshVeggies Admin Console</a></h1>
+{% endblock %}

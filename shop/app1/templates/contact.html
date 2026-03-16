@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Contact Us — FreshVeggies{% endblock %}
+{% block main-content %}
+<div class="auth-section">
+    <div class="auth-card" style="max-width: 520px;">
+        <div class="text-center mb-3">
+            <i class="fas fa-envelope" style="font-size: 2rem; color: var(--primary);"></i>
+        </div>
+        <h2>Contact Us</h2>
+        <p class="auth-subtitle">We'd love to hear from you!</p>
+
+        <!-- Contact Form -->
+        <form id="contact-form" action="{% url 'contact' %}" method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label" style="font-weight: 500;">Name</label>
+                <input type="text" class="form-control" name="name" placeholder="Your name" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" style="font-weight: 500;">Email</label>
+                <input type="email" class="form-control" name="email" placeholder="your@email.com" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" style="font-weight: 500;">Phone</label>
+                <input type="tel" class="form-control" name="phone" placeholder="Your phone number" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" style="font-weight: 500;">Message</label>
+                <textarea class="form-control" name="message" rows="4" placeholder="How can we help you?"
+                    required></textarea>
+            </div>
+            <button type="submit" class="btn-auth" id="contact-submit-btn">
+                <i class="fas fa-paper-plane me-2"></i>Send Message
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

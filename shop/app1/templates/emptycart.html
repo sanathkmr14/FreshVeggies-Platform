@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Cart Empty — FreshVeggies{% endblock %}
+{% block main-content %}
+<div class="container">
+  <div class="empty-cart-section">
+    <div class="empty-cart-icon">
+      <i class="fas fa-shopping-cart"></i>
+    </div>
+    <h2>Your cart is empty</h2>
+    <p>Looks like you haven't added any fresh produce yet.<br>Start shopping to fill your cart!</p>
+    <a href="{% url 'home' %}" class="btn-shop-now">
+      <i class="fas fa-leaf me-2"></i>Start Shopping
+    </a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Search "{{ search_query }}" — FreshVeggies{% endblock %}
+{% block main-content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-fresh mb-3">
+        <a href="{% url 'home' %}"><i class="fas fa-home me-1"></i>Home</a>
+        <span class="mx-2">›</span>
+        <span>Search Results</span>
+    </div>
+
+    <h2 class="section-title text-start mb-0">Search Results</h2>
+    <p class="section-subtitle text-start mb-4">
+        {% if search_query %}
+        Showing results for "<strong>{{ search_query }}</strong>"
+        {% else %}
+        Please enter a search term above.
+        {% endif %}
+    </p>
+
+    {% if products %}
+    <div class="product-grid">
+        {% for item in products %}
+        <a href="{% url 'product_detail' pk=item.pk %}" class="product-card">
+            <div class="product-card-img-wrapper">
+                <img src="{{ item.product_image.url }}" alt="{{ item.title }}" class="product-card-img">
+            </div>
+            <div class="product-card-body">
+                <h3 class="product-card-title">{{ item.title }}</h3>
+                <div class="product-card-price">
+                    ₹{{ item.discounted_price }}
+                    <span class="original">₹{{ item.selling_price }}</span>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    {% if search_query %}
+    <div class="text-center py-5">
+        <i class="fas fa-search" style="font-size: 3rem; color: var(--border); margin-bottom: 1rem;"></i>
+        <h4 style="font-weight: 600;">No products found</h4>
+        <p style="color: var(--text-muted);">We couldn't find any vegetables matching "{{ search_query }}".</p>
+        <a href="{% url 'home' %}" class="btn-shop-now mt-2">Browse All Products</a>
+    </div>
+    {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

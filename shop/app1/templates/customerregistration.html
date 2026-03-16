@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Register — FreshVeggies{% endblock %}
+{% block main-content %}
+<div class="auth-section">
+  <div class="auth-card">
+    <div class="text-center mb-3">
+      <i class="fas fa-user-plus" style="font-size: 2rem; color: var(--primary);"></i>
+    </div>
+    <h2>Create Account</h2>
+    <p class="auth-subtitle">Join FreshVeggies for farm-fresh produce</p>
+    <form action="" method="post" novalidate>
+      {% csrf_token %}
+      {% if messages %}
+      {% for message in messages %}
+      <div class="alert alert-fresh alert-{{ message.tags }} mb-3">{{ message }}</div>
+      {% endfor %}
+      {% endif %}
+      {% for field in form %}
+      <div class="mb-3">
+        <label class="form-label" style="font-weight: 500; font-size: 0.9rem;">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}
+        <small class="text-danger">{{ field.errors|striptags }}</small>
+        {% endif %}
+      </div>
+      {% endfor %}
+      <button type="submit" class="btn-auth">
+        <i class="fas fa-user-plus me-2"></i>Create Account
+      </button>
+      {% if form.non_field_errors %}
+      {% for error in form.non_field_errors %}
+      <div class="alert alert-fresh alert-danger mt-3">{{ error }}</div>
+      {% endfor %}
+      {% endif %}
+      <div class="text-center mt-3">
+        <span style="color: var(--text-muted); font-size: 0.9rem;">Already have an account?</span>
+        <a href="{% url 'login' %}" style="color: var(--primary); font-weight: 600; font-size: 0.9rem;"> Sign In</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

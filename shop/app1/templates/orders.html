@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Order History — FreshVeggies{% endblock %}
+{% block main-content %}
+<div class="modern-account-bg">
+  <div class="container py-4">
+    
+    <!-- Compact Header -->
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h2 class="fw-bold m-0" style="color: #0f172a; letter-spacing: -0.5px;">Account Settings</h2>
+      <div class="d-none d-sm-flex align-items-center gap-3">
+        <span class="text-muted fw-medium fs-6">{{ request.user.email }}</span>
+        <div class="bg-success text-white fw-bold d-flex justify-content-center align-items-center shadow-sm" style="width: 42px; height: 42px; border-radius: 50%;">
+          {{ request.user.first_name|first|default:"U"|upper }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Horizontal Navigation -->
+    <div class="bg-white rounded-top shadow-sm border border-bottom-0 p-2 d-flex flex-wrap gap-1 horizontal-nav-bar">
+      <a href="{% url 'profile' %}" class="btn btn-nav"><i class="fas fa-user me-2"></i>Profile Details</a>
+      <a href="{% url 'address' %}" class="btn btn-nav"><i class="fas fa-map-marker-alt me-2"></i>Saved Addresses</a>
+      <a href="{% url 'orders' %}" class="btn btn-nav active"><i class="fas fa-box me-2"></i>Order History</a>
+      <a href="{% url 'passwordchange' %}" class="btn btn-nav"><i class="fas fa-shield-alt me-2"></i>Security</a>
+    </div>
+
+    <!-- Content Card -->
+    <div class="bg-white rounded-bottom shadow-sm border p-4 p-md-5 mb-5 content-card">
+        
+        <div class="mb-4 pb-3 border-bottom border-light">
+            <h4 class="fw-bold text-dark mb-1">Order History</h4>
+            <p class="text-muted mb-0" style="font-size: 0.95rem;">Track and manage your recent purchases.</p>
+        </div>
+
+        <div class="d-flex flex-column gap-3">
+            {% for op in order_placed %}
+            <div class="order-list-item border rounded-3 overflow-hidden d-flex flex-column flex-md-row bg-white">
+                
+                <!-- Product Image -->
+                <div class="p-3 bg-light d-flex justify-content-center align-items-center border-end-md border-light" style="width: 120px; min-width: 120px;">
+                    <img src="{{ op.product.product_image.url }}" alt="{{ op.product.title }}" class="img-fluid rounded" style="mix-blend-mode: multiply; max-height: 80px;">
+                </div>
+                
+                <!-- Details -->
+                <div class="p-3 p-md-4 flex-grow-1 d-flex flex-column justify-content-center">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <h5 class="fw-bold text-dark mb-1">{{ op.product.title }}</h5>
+                            <p class="text-muted mb-0" style="font-size: 0.9rem;">Qty: <span class="fw-semibold text-dark">{{ op.quantity }}</span> <span class="mx-2">•</span> Total: <span class="fw-bold text-success">₹{{ op.total_cost }}</span></p>
+                        </div>
+                        <span class="badge border
+                            {% if op.status == 'Pending' %}bg-warning-subtle text-warning-emphasis border-warning-subtle
+                            {% elif op.status == 'Cancel' %}bg-danger-subtle text-danger border-danger-subtle
+                            {% elif op.status == 'Delivered ' %}bg-success-subtle text-success border-success-subtle
+                            {% else %}bg-primary-subtle text-primary border-primary-subtle{% endif %} rounded-pill px-3 py-1 fw-medium" style="font-size: 0.8rem;">
+                            {{ op.status }}
+                        </span>
+                    </div>
+
+                    <!-- Compact Stepper -->
+                    <div class="mt-3 pt-3 border-top border-light">
+                        <div class="position-relative compact-stepper px-2">
+                            <!-- Background line -->
+                            <div class="position-absolute bg-light rounded-pill" style="top: 8px; left: 5%; right: 5%; height: 4px; z-index: 0;"></div>
+                            
+                            <!-- Active line -->
+                            <div class="position-absolute bg-success rounded-pill" 
+                                 style="top: 8px; left: 5%; z-index: 0; height: 4px; width: {% if op.status == 'Accepted' %}15%{% elif op.status == 'Packed' %}45%{% elif op.status == 'On The Way ' %}75%{% elif op.status == 'Delivered ' %}90%{% else %}0%{% endif %}; transition: width 0.5s ease;"></div>
+                            
+                            <!-- Points -->
+                            <div class="d-flex justify-content-between position-relative z-1">
+                                <!-- Node 1 -->
+                                <div class="text-center" style="width: 25%;">
+                                    <div class="mx-auto rounded-circle d-flex justify-content-center align-items-center shadow-sm border
+                                        {% if op.status != 'Pending' and op.status != 'Cancel' %}bg-success text-white border-success{% else %}bg-white border-light text-muted{% endif %}" 
+                                        style="width: 20px; height: 20px;">
+                                        {% if op.status != 'Pending' and op.status != 'Cancel' %}<i class="fas fa-check" style="font-size: 0.5rem;"></i>{% endif %}
+                                    </div>
+                                    <div class="mt-1 fw-medium {% if op.status != 'Pending' and op.status != 'Cancel' %}text-dark{% else %}text-muted{% endif %}" style="font-size: 0.75rem;">Accepted</div>
+                                </div>
+                                <!-- Node 2 -->
+                                <div class="text-center" style="width: 25%;">
+                                    <div class="mx-auto rounded-circle d-flex justify-content-center align-items-center shadow-sm border
+                                        {% if op.status == 'Packed' or op.status == 'On The Way ' or op.status == 'Delivered ' %}bg-success text-white border-success{% else %}bg-white border-light text-muted{% endif %}" 
+                                        style="width: 20px; height: 20px;">
+                                        {% if op.status == 'Packed' or op.status == 'On The Way ' or op.status == 'Delivered ' %}<i class="fas fa-check" style="font-size: 0.5rem;"></i>{% endif %}
+                                    </div>
+                                    <div class="mt-1 fw-medium {% if op.status == 'Packed' or op.status == 'On The Way ' or op.status == 'Delivered ' %}text-dark{% else %}text-muted{% endif %}" style="font-size: 0.75rem;">Packed</div>
+                                </div>
+                                <!-- Node 3 -->
+                                <div class="text-center" style="width: 25%;">
+                                    <div class="mx-auto rounded-circle d-flex justify-content-center align-items-center shadow-sm border
+                                        {% if op.status == 'On The Way ' or op.status == 'Delivered ' %}bg-success text-white border-success{% else %}bg-white border-light text-muted{% endif %}" 
+                                        style="width: 20px; height: 20px;">
+                                        {% if op.status == 'On The Way ' or op.status == 'Delivered ' %}<i class="fas fa-check" style="font-size: 0.5rem;"></i>{% endif %}
+                                    </div>
+                                    <div class="mt-1 fw-medium {% if op.status == 'On The Way ' or op.status == 'Delivered ' %}text-dark{% else %}text-muted{% endif %}" style="font-size: 0.75rem;">Shipping</div>
+                                </div>
+                                <!-- Node 4 -->
+                                <div class="text-center" style="width: 25%;">
+                                    <div class="mx-auto rounded-circle d-flex justify-content-center align-items-center shadow-sm border
+                                        {% if op.status == 'Delivered ' %}bg-success text-white border-success{% else %}bg-white border-light text-muted{% endif %}" 
+                                        style="width: 20px; height: 20px;">
+                                        {% if op.status == 'Delivered ' %}<i class="fas fa-check" style="font-size: 0.5rem;"></i>{% endif %}
+                                    </div>
+                                    <div class="mt-1 fw-medium {% if op.status == 'Delivered ' %}text-dark{% else %}text-muted{% endif %}" style="font-size: 0.75rem;">Delivered</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5 bg-light rounded-4 border border-dashed text-muted">
+              <i class="fas fa-shopping-basket fs-1 mb-3 opacity-50"></i>
+              <h5 class="fw-bold text-dark mb-2">No Orders Yet</h5>
+              <p class="mb-4 max-w-sm mx-auto fs-6">Looks like you haven't made your first fresh veggies purchase.</p>
+              <a href="{% url 'home' %}" class="btn btn-success px-5 py-2 fw-semibold modern-btn shadow-sm">
+                Start Shopping
+              </a>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+.modern-account-bg {
+    background-color: #f1f5f9;
+    min-height: calc(100vh - 80px);
+}
+
+.horizontal-nav-bar {
+    border-color: #e2e8f0 !important;
+}
+
+.content-card {
+    border-color: #e2e8f0 !important;
+}
+
+.btn-nav {
+    color: #475569;
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 0.7rem 1.25rem;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    transition: all 0.2s ease;
+}
+
+.btn-nav:hover {
+    background-color: #f8fafc;
+    color: #0f172a;
+}
+
+.btn-nav.active {
+    background-color: #ecfdf5;
+    color: #059669;
+    font-weight: 600;
+}
+
+.modern-btn {
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+.modern-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2) !important;
+}
+
+.order-list-item {
+    border-color: #e2e8f0 !important;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.order-list-item:hover {
+    border-color: #cbd5e1 !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.border-dashed {
+    border-style: dashed !important;
+    border-color: #cbd5e1 !important;
+}
+
+@media (min-width: 768px) {
+    .border-end-md {
+        border-right: 1px solid #e2e8f0;
+    }
+}
+</style>
+{% endblock %}
